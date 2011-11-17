@@ -1,73 +1,73 @@
-
 public class MergeSort<T extends Comparable<T>>
 {
-	private T[] objects;
-	
-	public MergeSort(T[] objects)
+	private T[ ] objects;
+
+	public MergeSort( T[ ] objects )
 	{
 		this.setObjects( objects );
 	}
-	
-	public void sort(int low, int high)
+
+	public Stack<T> sort( T[ ] arr )
 	{
-		if(high - low == 1 )
-		{
-			return;
+		Stack<T> toReturn = new Stack<T>();
+		int i;
+		T temp = arr[0];
+		int arrLen = arr.length;
+		if( arrLen == 1 )
+		{// BASE CASE
+			toReturn = new Stack<T>();
+			toReturn.push( temp );
+			return toReturn;
 		}
-		else
+		// else, meaning there are more than one element
+		// so call sort(T[] arr) on both the left and the right half of the
+		// array
+		int halfsize = ( arrLen / 2 );
+		T[ ] left = arr.clone();
+		
+		T[ ] right = left.clone();
+		
+		for( i = 0; i < arrLen; i++ )
 		{
-			int p = Math.floor( (high - low )/(2.0)) + low;
-			sort(low, p);
-			sort(p+1, high );
-			int comparisonResult;
-			for(int i = 0; i < high; i++)
-			{	
-				comparisonResult = objects[low].compareTo( objects[p+1] );
-				if(comparisonResult > 0)
-				{//objects[low] is bigger
-					comparisonResult = objects[low].compareTo( objects[i] );
-					if(comparisonResult > 0)
-					{//objects[low] was bigger
-						
-					}
-					else if(comparisonResult < 0)
-					{//objects[i] was bigger
-						
-					}
-					else
-					{//they were equal
-						
-					}
+			if( i < halfsize )
+			{
+				left[i] = arr[i];
+			}
+			right[i] = arr[i];
+		}
+		Stack<T> leftResults = sort( left );
+		Stack<T> rightResults = sort( right );
+		T poppedLeft = leftResults.pop();
+		T poppedRight = leftResults.pop();
+		for( i = 0; i < arrLen; i++ )
+		{
+			if( ( poppedLeft == null ) || ( poppedRight == null ) )
+			{
+				if( poppedLeft == null )
+				{
+					toReturn.push( poppedRight );
+					poppedRight = rightResults.pop();
 				}
-				else if(comparisonResult < 0)
-				{//objects[p+1] is bigger
-					comparisonResult = objects[p+1].compareTo( objects[i] );
-					if(comparisonResult > 0)
-					{//objects[p+1] was bigger
-						swap(p+1, i);
-						
-						
-						
-					}
-					else if(comparisonResult < 0)
-					{//objects[i] was bigger
-						
-					}
-					else
-					{//they were equal
-						
-					}
+				else if( poppedRight == null )
+				{
+					toReturn.push( poppedLeft );
+					poppedLeft = leftResults.pop();
 				}
-				else
-				{//they are the same
-					
-				}
-				low++;
+			}
+			else if( poppedLeft.compareTo( poppedRight ) > 0 )
+			{
+				toReturn.push( poppedRight );
+				poppedRight = rightResults.pop();
+			}
+			else
+			{
+				toReturn.push( poppedLeft );
+				poppedLeft = leftResults.pop();
 			}
 		}
-		
+		return toReturn;
 	}
-	
+
 	void swap( int index1, int index2 )
 	{
 		T temp = objects[index1];
@@ -75,16 +75,13 @@ public class MergeSort<T extends Comparable<T>>
 		objects[index2] = temp;
 	}
 
-	public T[] getObjects()
+	public T[ ] getObjects()
 	{
 		return objects;
 	}
 
-	public void setObjects( T[] objects )
+	public void setObjects( T[ ] objects )
 	{
 		this.objects = objects;
 	}
-	
-	
-	
 }

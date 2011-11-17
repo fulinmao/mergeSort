@@ -7,72 +7,56 @@ public class MergeSort<T extends Comparable<T>>
 		this.setObjects( objects );
 	}
 
-	public Stack<T> sort( T[ ] arr )
+	public Queue<T> sort( int lowIndex, int highIndex)
 	{
-		Stack<T> toReturn = new Stack<T>();
+		Queue<T> left, right;
+		Queue<T> toReturn = new Queue<T>();
 		int i;
-		T temp = arr[0];
-		int arrLen = arr.length;
+		int arrLen = highIndex - lowIndex + 1;
 		if( arrLen == 1 )
 		{// BASE CASE
-			toReturn = new Stack<T>();
-			toReturn.push( temp );
+			toReturn.push( objects[lowIndex] );
 			return toReturn;
 		}
-		// else, meaning there are more than one element
-		// so call sort(T[] arr) on both the left and the right half of the
-		// array
-		int halfsize = ( arrLen / 2 );
-		T[ ] left = arr.clone();
-		
-		T[ ] right = left.clone();
-		
-		for( i = 0; i < arrLen; i++ )
+		int pivot = ((highIndex - lowIndex)/2  + lowIndex);
+		left = this.sort(lowIndex, pivot );
+		right = this.sort( pivot + 1, highIndex);
+		int comparisonResult;
+		T tempL = left.pop();
+		T tempR = right.pop();
+		for(i = 0; i < arrLen; i++)
 		{
-			if( i < halfsize )
+			if(tempL == null)
 			{
-				left[i] = arr[i];
-			}
-			right[i] = arr[i];
-		}
-		Stack<T> leftResults = sort( left );
-		Stack<T> rightResults = sort( right );
-		T poppedLeft = leftResults.pop();
-		T poppedRight = leftResults.pop();
-		for( i = 0; i < arrLen; i++ )
-		{
-			if( ( poppedLeft == null ) || ( poppedRight == null ) )
-			{
-				if( poppedLeft == null )
+				while(tempR != null)
 				{
-					toReturn.push( poppedRight );
-					poppedRight = rightResults.pop();
+					toReturn.push( tempR );
+					tempR = right.pop();
 				}
-				else if( poppedRight == null )
+				return toReturn;
+			}
+			else if(tempR == null )
+			{
+				while(tempL != null)
 				{
-					toReturn.push( poppedLeft );
-					poppedLeft = leftResults.pop();
+					toReturn.push( tempL );
+					tempL = left.pop();
 				}
+				return toReturn;
 			}
-			else if( poppedLeft.compareTo( poppedRight ) > 0 )
+			comparisonResult = tempL.compareTo( tempR ); 
+			if( comparisonResult >= 0)
 			{
-				toReturn.push( poppedRight );
-				poppedRight = rightResults.pop();
+				toReturn.push(tempL);
+				tempL = left.pop();
 			}
-			else
+			else if( comparisonResult < 0)
 			{
-				toReturn.push( poppedLeft );
-				poppedLeft = leftResults.pop();
+				toReturn.push(tempR);
+				tempR = right.pop();
 			}
 		}
 		return toReturn;
-	}
-
-	void swap( int index1, int index2 )
-	{
-		T temp = objects[index1];
-		objects[index1] = objects[index2];
-		objects[index2] = temp;
 	}
 
 	public T[ ] getObjects()
